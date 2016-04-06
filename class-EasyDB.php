@@ -39,8 +39,6 @@ class edb{
     
     /**
      * Initiate the EasyDatabase class and connect to the server.
-     * @example ../1-opendatabase.php Example file.
-     * @final
      * @category Main
      * @uses connect initiate connection to database.
      * @param String $dbhost the database server host url/ip address.
@@ -48,7 +46,7 @@ class edb{
      * @param String $username the database username.
      * @param String $password the database password.
      */
-    public final function __construct($dbhost, $dbname, $username, $password){
+    public function __construct($dbhost, $dbname, $username, $password){
         $this::connect($dbhost, $dbname, $username, $password);
     }
     /**
@@ -64,7 +62,6 @@ class edb{
     }
     /**
      * Initiate a connection to a database server.
-     * @final
      * @category Main
      * @param type $dbhost
      * @param type $dbname
@@ -72,7 +69,7 @@ class edb{
      * @param type $password
      
      */
-    private final function connect($dbhost,$dbname,$username,$password){
+    private function connect($dbhost,$dbname,$username,$password){
         $this->connection=mysqli_connect($dbhost, $username, $password, $dbname);
         $this->currentDB=($this->isConnected())?$dbname:null;
     }
@@ -86,7 +83,10 @@ class edb{
         $this->connection=null;
         $this->currentDB=null;
     }
-    public final function useDatabase($dbname){
+    /*
+     * @todo finish this function.
+     */
+    public function useDatabase($dbname){
         
     }
     /**
@@ -98,6 +98,11 @@ class edb{
     public final function isConnected(){
         return ($this->connection!=null)?(!mysqli_connect_errno())?true:false:false;
     }
+    /*
+     * Get an array containing the names of all tables in the current database.
+     * @final
+     * @return array
+     */
     public final function getTables(){
         if(!$this::isConnected()) return;
         $result=mysqli_query($this->connection,'SHOW TABLES');
@@ -105,7 +110,13 @@ class edb{
         while($row=mysqli_fetch_array($result)) array_push($tbls,$row[0]);
         return $tbls;
     }
-    public function getColumn($tblname){
+    /*
+     * Get an array containing the nemaes of all columns inside the given table.
+     * @params string $tblname the name of the table.
+     * @final
+     * @retrun array
+     */
+    public final function getColumn($tblname){
         if(!$this::isConnected()) return;
         $result=mysqli_query($this->connection,"SHOW COLUMNS FROM ".$tblname);
         if($result){
@@ -153,18 +164,11 @@ class edb{
      * }
      * ?>
      * @param Array $option
-     * @example ../example/2-querytable.php Example code for querying tables with mysql.
+     *
+     * Note: This function is not yet final, It's too messy. Please do give suggestion or
+     * just fork the repo and contribute by coding it yourself thankyou. 
      */
     public function select($option){
-        /*
-        if(!empty($option['tblname'])):
-            $str = "SELECT * FROM `".$option['tblname'].'`';
-            $str.=(!empty($option['where']))?$this::encodeSelectConditions($option['where']):'';
-            $str.=(!empty($option['sort']))?$this::encodeSelectSorting($option['sort']):'';
-            $this->resultSet=mysqli_query($this->connection, $str);
-            $this->pointerOffset=0;
-        endif;
-        */
         if(!$this::isConnected()) return;
         if(empty($option['tblname'])) return;
         $str="SELECT * FROM '".$option['tblname']."'";
