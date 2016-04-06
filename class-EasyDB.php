@@ -155,12 +155,12 @@ class edb{
      * @param Array $option
      * @example ../example/2-querytable.php Example code for querying tables with mysql.
      */
-    public function query($option){
+    public function select($option){
         /*
         if(!empty($option['tblname'])):
             $str = "SELECT * FROM `".$option['tblname'].'`';
-            $str.=(!empty($option['where']))?$this::encodeQueryConditions($option['where']):'';
-            $str.=(!empty($option['sort']))?$this::encodeQuerySorting($option['sort']):'';
+            $str.=(!empty($option['where']))?$this::encodeSelectConditions($option['where']):'';
+            $str.=(!empty($option['sort']))?$this::encodeSelectSorting($option['sort']):'';
             $this->resultSet=mysqli_query($this->connection, $str);
             $this->pointerOffset=0;
         endif;
@@ -168,8 +168,8 @@ class edb{
         if(!$this::isConnected()) return;
         if(empty($option['tblname'])) return;
         $str="SELECT * FROM '".$option['tblname']."'";
-        $str.=(!empty($option['where']))?$this::encodeQueryConditions($option['where']):'';
-        $str.=(!empty($option['sort']))?$this::encodeQuerySorting($option['sort']):'';
+        $str.=(!empty($option['where']))?$this::encodeSelectConditions($option['where']):'';
+        $str.=(!empty($option['sort']))?$this::encodeSelectSorting($option['sort']):'';
         $this->resultSet=mysqli_query($this->connection, $str);
         $this->pointerOffset=0;
     }
@@ -186,7 +186,7 @@ class edb{
      * @param Array $option
      * @return String
      */
-    private function encodeQueryConditions($option){
+    private function encodeSelectConditions($option){
         $str='';
         for($i=0;$i<sizeof($option);$i++):
             $operator=$this::validateQueryOperator($option[$i]['operator']);
@@ -207,7 +207,7 @@ class edb{
      * @param Array $option
      * @return String
      */
-    private function encodeQuerySorting($option){
+    private function encodeSelectSorting($option){
         $str='';
         if(is_array($option['fieldname'])){
             for($i=0;$i<sizeof($option['fieldname']);$i++){ $str.=(empty($str))?' '.$option['fieldname'][$i].' ':' , '.$option['fieldname'][$i].' '; }
