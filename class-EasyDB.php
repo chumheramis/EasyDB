@@ -293,27 +293,17 @@ class edb{
         $tblname=$option['tblname'];
         $cols='';
         $vals=array();
-        foreach($option['columns'] as $col){
-            if($cols==''){
-                $cols.='`'.$col.'`';
-            }else{
-                $cols.=',`'.$col.'`';
-            }
-        }
-        for($i=0;$i<count($option['value']);$i++){
-            $sql_val='';
-            foreach($option['value'][$i] as $col_value){
-                if($sql_val==''){
-                    $sql_val='`'.$col_value.'`';
-                }else{
-                    $sql_val=',`'.$col_value.'`';
-                }
-            }
-            $vals[]='('.$sql_val.')';
-        }
+        $cols = implode(',', $option['columns']);
+        $vals = implode("','", $option['value']);
         
-        $sql='INSERT INTO '.$tblname.' ('.$cols.')';
-        echo $sql;
+        $sql="INSERT INTO $tblname ($cols) VALUES ('$vals')";
+        try{
+            return (mysqli_query($this->connection, $sql))?true:false;
+        }
+        catch(Exception $ex){
+            var_dump($ex);
+            return false;
+        }
     }
     
     /**
