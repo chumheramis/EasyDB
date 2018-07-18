@@ -171,11 +171,17 @@ class edb{
     public function select($option){
         if(!$this::isConnected()) return;
         if(empty($option['tblname'])) return;
-        $str="SELECT * FROM '".$option['tblname']."'";
+        $str="SELECT * FROM ".$option['tblname']." ";
         $str.=(!empty($option['where']))?$this::encodeSelectConditions($option['where']):'';
         $str.=(!empty($option['sort']))?$this::encodeSelectSorting($option['sort']):'';
-        $this->resultSet=mysqli_query($this->connection, $str);
-        $this->pointerOffset=0;
+        try{
+            $this->resultSet=mysqli_query($this->connection, $str);
+            $this->pointerOffset=0;
+            return true;
+        }catch (Exception $ex){
+            return false;
+        }
+        
     }
     public function clearQuery(){
         @mysqli_free_result($this->resultSet);
@@ -196,7 +202,8 @@ class edb{
             $operator=$this::validateQueryOperator($option[$i]['operator']);
             $option[$i]['value']=($operator=='LIKE')?"'%".$option[$i]['value']."%'":$option[$i]['value'];
             if(empty($str)):
-                $str.=($operator)?$option[$i]['filedname'].' '.$operator.' '.$option[$i]['value'].' ':'';
+                #$str.=($operator)?$option[$i]['fieldname'].' '.$operator.' '.$option[$i]['value'].' ':'';
+                $str.= ($operator)? $option[$i]['fieldname'] . " " . $operator . " '" . $option[$i]['value'] . "' ": "";
             else:
                 if(!empty($option[$i]['condition'])):
                     $cnd=$this::validateConditionOperator($option[$i]['condition']);
@@ -293,27 +300,17 @@ class edb{
         $tblname=$option['tblname'];
         $cols='';
         $vals=array();
-        foreach($option['columns'] as $col){
-            if($cols==''){
-                $cols.='`'.$col.'`';
-            }else{
-                $cols.=',`'.$col.'`';
-            }
-        }
-        for($i=0;$i<count($option['value']);$i++){
-            $sql_val='';
-            foreach($option['value'][$i] as $col_value){
-                if($sql_val==''){
-                    $sql_val='`'.$col_value.'`';
-                }else{
-                    $sql_val=',`'.$col_value.'`';
-                }
-            }
-            $vals[]='('.$sql_val.')';
-        }
+        $cols = implode(',', $option['columns']);
+        $vals = implode("','", $option['value']);
         
-        $sql='INSERT INTO '.$tblname.' ('.$cols.')';
-        echo $sql;
+        $sql="INSERT INTO $tblname ($cols) VALUES ('$vals')";
+        try{
+            return (mysqli_query($this->connection, $sql))?true:false;
+        }
+        catch(Exception $ex){
+            var_dump($ex);
+            return false;
+        }
     }
     
     /**
