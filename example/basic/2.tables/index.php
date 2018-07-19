@@ -42,27 +42,28 @@ if (!$edb->hasTable($user_table['tblname'])) {
 	$op_res = $edb->createTable($user_table);
 	if ($op_res) {
 		// table create success
-		echo '<p>' . $user_table['tblname'] . ' created succesfully</p>';
+		echo "<p>" . $user_table['tblname'] . " created succesfully</p>";
 	}
 	else {
 		// table was not created succesfully due to some errors.
-		echo '<p>' . $user_table['tblname'] . ' was not created</p>';
+		echo "<p>" . $user_table['tblname'] . " was not created</p>";
 	}
 }
 else {
-	echo '<p>' . $user_table['tblname'] . ' is already created</p>';
+	echo "<p>" . $user_table['tblname'] . " is already created</p>";
 }
 
 if (!$edb->hasTable($post_table['tblname'])) {
 	$op_res = $edb->createTable($post_table);
 	if ($op_res) {
 		// table created succesfully
-		echo '<p>' . $post_table['tblname'] . ' created succesfully</p>';
+		echo "<p>" . $post_table['tblname'] . " created succesfully</p>";
 	}
 	else {
+		echo "Error occured. Call Mark Heramis @ markheramis@github.com";
 		// table was not created succesfully due to some errors.
 	}
 }
 else {
-	echo '<p>' . $post_table['tblname'] . ' is already created<p>';
+	echo "<p>" . $post_table['tblname'] . " is already created<p>";
 }

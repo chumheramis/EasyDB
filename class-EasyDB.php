@@ -4,7 +4,8 @@
  * @name $edb
  * @author        Mark Heramis <chumheramis@gmail.com>
  * @copyright (c) 2014, Mark Heramis
- * @version       1.0
+ * @version       2.0
+ * Updated the version from 1.0 to 2.0 for a cleaner and greener future
  */
 class edb
 {
@@ -39,7 +40,7 @@ class edb
 	 *
 	 * @var array The array of errors.
 	 */
-	private $error_message = array();
+	private $error_message = [];
 
 
 	/**
@@ -94,17 +95,29 @@ class edb
 	 */
 	private final function close()
 	{
-		@mysqli_close($this->connection);
+		/**
+		 * Instead of using silence operators, use try catch statement.
+		 * It is a very bad practise to use silence operators
+		 * it's a no no
+		 */
+		try {
+			mysqli_close($this->connection);
+		}
+		catch (Exception $e) {
+			die('Bad things sometimes happen');
+		}
 		$this->connection = null;
 		$this->currentDB  = null;
 	}
 
-	/*
+	/**
 	 * @todo finish this function.
+	 *
+	 * @param $dbname
 	 */
 	public function useDatabase($dbname)
 	{
-
+		// ?
 	}
 
 	/**
@@ -123,13 +136,16 @@ class edb
 	 * @final
 	 * @return array
 	 */
+	/**
+	 * @return array|bool
+	 */
 	public final function getTables()
 	{
 		if (!$this::isConnected()) {
-			return;
+			return true; //return true; or just continue; ??
 		}
 		$result = mysqli_query($this->connection, 'SHOW TABLES');
-		$tbls   = array();
+		$tbls   = [];
 		while ($row = mysqli_fetch_array($result)) {
 			array_push($tbls, $row[0]);
 		}
@@ -142,14 +158,19 @@ class edb
 	 * @final
 	 * @retrun array
 	 */
+	/**
+	 * @param $tblname
+	 *
+	 * @return array|bool
+	 */
 	public final function getColumn($tblname)
 	{
 		if (!$this::isConnected()) {
-			return;
+			return true; //return true; or just continue; ??
 		}
 		$result = mysqli_query($this->connection, "SHOW COLUMNS FROM " . $tblname);
 		if ($result) {
-			$columns = array();
+			$columns = [];
 			while ($col = mysqli_fetch_row($result)) {
 				array_push($columns, $col[0]);
 			}
@@ -167,7 +188,7 @@ class edb
 	public function hasTable($tblname)
 	{
 		if (!$this::isConnected()) {
-			return;
+			return true; //return true; or just continue; ??
 		}
 		$result = mysqli_query($this->connection, "SHOW TABLES LIKE '" . $tblname . "'");
 		return (mysqli_num_rows($result)) ? true : false;
@@ -205,14 +226,16 @@ class edb
 	 *
 	 * Note: This function is not yet final, It's too messy. Please do give suggestion or
 	 * just fork the repo and contribute by coding it yourself thankyou.
+	 *
+	 * @return bool
 	 */
 	public function select($option)
 	{
 		if (!$this::isConnected()) {
-			return;
+			return true; //return true; or just continue; ??
 		}
 		if (empty($option['tblname'])) {
-			return;
+			return true; //return true; or just continue; ??
 		}
 		$str = "SELECT * FROM " . $option['tblname'] . " ";
 		$str .= (!empty($option['where'])) ? $this::encodeSelectConditions($option['where']) : '';
@@ -220,7 +243,7 @@ class edb
 		try {
 			$this->resultSet     = mysqli_query($this->connection, $str);
 			$this->pointerOffset = 0;
-			return true;
+			return true; //return true; or just continue; ??
 		}
 		catch (Exception $ex) {
 			return false;
@@ -230,7 +253,17 @@ class edb
 
 	public function clearQuery()
 	{
-		@mysqli_free_result($this->resultSet);
+		/**
+		 * Instead of using silence operators, use try catch statement.
+		 * It is a very bad practise to use silence operators
+		 * it's a no no
+		 */
+		try {
+			mysqli_free_result($this->resultSet);
+		}
+		catch (Exception $e) {
+			die('Bad things sometimes happen');
+		}
 		$this->resultSet  = null;
 		$this->currentTBL = null;
 	}
@@ -334,11 +367,21 @@ class edb
 	 * Return the next data in the resultset if it has, return null otherwise.
 	 *
 	 * @category Query
-	 * @return array
+	 * @return array|object
 	 */
 	public function getNext()
 	{
-		return @mysqli_fetch_object($this->resultSet);
+		/**
+		 * Instead of using silence operators, use try catch statement.
+		 * It is a very bad practise to use silence operators
+		 * it's a no no
+		 */
+		try {
+			return mysqli_fetch_object($this->resultSet);
+		}
+		catch (Exception $e) {
+			die('Bad things sometimes happen');
+		}
 	}
 
 	/**
@@ -353,7 +396,17 @@ class edb
 	 */
 	public function movePointer($offset)
 	{
-		return @mysqli_data_seek($this->resultSet, $offset);
+		/**
+		 * Instead of using silence operators, use try catch statement.
+		 * It is a very bad practise to use silence operators
+		 * it's a no no
+		 */
+		try {
+			return mysqli_data_seek($this->resultSet, $offset);
+		}
+		catch (Exception $e) {
+			die('Bad things sometimes happen');
+		}
 	}
 
 	/**
@@ -363,7 +416,17 @@ class edb
 	 */
 	public function getRowCount()
 	{
-		return @mysqli_num_rows($this->resultSet);
+		/**
+		 * Instead of using silence operators, use try catch statement.
+		 * It is a very bad practise to use silence operators
+		 * it's a no no
+		 */
+		try {
+			return mysqli_num_rows($this->resultSet);
+		}
+		catch (Exception $e) {
+			die('Bad things sometimes happen');
+		}
 	}
 
 	/**
@@ -396,19 +459,29 @@ class edb
 		endif;
 	}
 
+	/**
+	 * @param $tblname
+	 *
+	 * @return bool
+	 */
 	public function deleteTable($tblname)
 	{
 		$str = 'DROP TABLE `' . $tblname . '`';
 		if (mysqli_query($this->connection, $str)) {
-			return true;
+			return true; //return true; or just continue; ??
 		}
 	}
 
+	/**
+	 * @param $option
+	 *
+	 * @return bool
+	 */
 	public function insertData($option)
 	{
 		$tblname = $option['tblname'];
 		$cols    = '';
-		$vals    = array();
+		$vals    = [];
 		$cols    = implode(',', $option['columns']);
 		$vals    = implode("','", $option['value']);
 
@@ -433,8 +506,8 @@ class edb
 	{
 		if (count($colOptions)) {
 			$str          = '';
-			$primaryArray = array();
-			$uniqueArray  = array();
+			$primaryArray = [];
+			$uniqueArray  = [];
 			foreach ($colOptions as $cols) {
 				$str .= (empty($str)) ? $this::encodeColumn($cols) : ',' . $this::encodeColumn($cols);
 				if (!empty($cols['primary']) && $cols['primary']) {
@@ -454,6 +527,11 @@ class edb
 		}
 	}
 
+	/**
+	 * @param $primaryArray
+	 *
+	 * @return string
+	 */
 	private function encodePrimary($primaryArray)
 	{
 		$str = '';
@@ -463,6 +541,11 @@ class edb
 		return 'PRIMARY KEY(' . $str . ')';
 	}
 
+	/**
+	 * @param $uniqueArray
+	 *
+	 * @return string
+	 */
 	private function encodeUnique($uniqueArray)
 	{
 		$str = '';
@@ -550,6 +633,11 @@ class edb
 		return ($colOption['zerofill'] && $this::isNumeric($colOption['type'])) ? ' ZEROFILL ' : '';
 	}
 
+	/**
+	 * @param $colOption
+	 *
+	 * @return string
+	 */
 	private function encodeColumnDefault($colOption)
 	{
 		return "DEFAULT '" . $colOption['default'] . "'";
@@ -578,7 +666,7 @@ class edb
 	private function validateDataType($type)
 	{
 		$type      = strtoupper($type);
-		$typearray = array(
+		$typearray = [
 			'BIGINT',
 			'DECIMAL',
 			'DOUBLE',
@@ -605,7 +693,7 @@ class edb
 			'TINYBLOB',
 			'VARBINARY',
 			'BIT'        // Bits and Bytes
-		);
+		];
 		return (array_search($type, $typearray)) ? $type : 'VARCHAR';
 	}
 
@@ -619,7 +707,7 @@ class edb
 	 */
 	private function isNumeric($type)
 	{
-		$numericType = array('BIGINT', 'DECIMAL', 'DOUBLE', 'FLOAT', 'INT', 'MEDIUMINT', 'SMALLINT', 'TINYINT');
+		$numericType = ['BIGINT', 'DECIMAL', 'DOUBLE', 'FLOAT', 'INT', 'MEDIUMINT', 'SMALLINT', 'TINYINT'];
 		return (array_search(strtoupper($type), $numericType)) ? true : false;
 	}
 
@@ -633,7 +721,7 @@ class edb
 	private function getDefaultLength($type)
 	{
 		$type    = strtoupper($type);
-		$default = array('VARCHAR' => '80', 'DECIMAL' => '12');
+		$default = ['VARCHAR' => '80', 'DECIMAL' => '12'];
 		return (!empty($default[$type])) ? '(' . $default[$type] . ')' : '';
 	}
 }
