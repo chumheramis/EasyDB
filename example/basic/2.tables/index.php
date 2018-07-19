@@ -1,8 +1,10 @@
 <?php
 include_once('config.php');
-// Here we just include a php file which forms arrays
-// in which to create into table. please check the files
-// and tell me what you think.
+/**
+ * Here we go. Just include a php file in form of arrays
+ * in which to create into table. Thus, check the files
+ * and tell me what you think. olrayt
+ */
 include_once('user_table.php');
 include_once('post_table.php');
 /**
