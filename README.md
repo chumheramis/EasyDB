@@ -3,4 +3,13 @@ EasyDB
 
 Easy DB is a mysqli wrapper written in PHP
 
-Tutorial Coming soon
+## Objective
+To write a database wrapper/API that will allow programmers to focus on their task instead of worrying about SQL. This is only for lazy programmers.
+
+## Inspiration
+I am so lazy, so I wrote this initially for myself.
+
+# Todo
+- add join functionality
+- test other features
+- refine code
