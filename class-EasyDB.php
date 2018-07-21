@@ -259,7 +259,7 @@ class edb
 		 * it's a no no
 		 */
 		try {
-			mysqli_free_result($this->resultSet);
+			@mysqli_free_result($this->resultSet);
 		}
 		catch (Exception $e) {
 			die('Bad things sometimes happen');
