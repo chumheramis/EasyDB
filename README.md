@@ -13,3 +13,6 @@ I am so lazy, so I wrote this initially for myself.
 - add join functionality
 - test other features
 - refine code
+- add delete data
+- add demo for select
+- add demo for update
