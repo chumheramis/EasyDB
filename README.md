@@ -12,4 +12,4 @@ I am so lazy, so I wrote this initially for myself.
 # Todo
 - add join functionality
 - test other features
-- refine code
+- refine

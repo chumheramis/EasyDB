@@ -183,6 +183,36 @@ class edb{
         }
         
     }
+
+    public function deleteData($option){
+        $str="DELETE FROM `" . $option['tblname'] . "` ";
+        $str.= (!empty($option['where']))?$this::encodeSelectConditions($option['where']):'';
+        $this->resultSet=mysqli_query($this->connection, $str);
+        $this->pointerOffset=0;
+        return true;
+    }
+
+    public function update($option){
+        if(!$this::isConnected()) return;
+        if(empty($option['tblname'])) return;
+        $str="UPDATE ". $option['tblname'] . " ";
+        $array_keys = array_keys($option['set']);
+        $lastElement = array_pop($array_keys);
+        foreach($option['set'] as $key => $value){
+            $mykey = $key;
+            $str.= $key ."='$value' ";
+            $str.= ($key != $lastElement) ?",":"";
+        }
+        $str.=(!empty($option['where']))?$this::encodeSelectConditions($option['where']):'';
+        
+        try{
+            $this->resultSet=mysqli_query($this->connection,$str);
+            $this->pointerOffset=0;
+            return true;
+        }catch(Exception $ex){
+            return false;
+        }
+    }
     public function clearQuery(){
         @mysqli_free_result($this->resultSet);
         $this->resultSet=null;
@@ -296,6 +326,7 @@ class edb{
             return true;
         }
     }
+
     public function insertData($option){
         $tblname=$option['tblname'];
         $cols='';
