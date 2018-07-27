@@ -174,6 +174,7 @@ class edb{
         $str="SELECT * FROM ".$option['tblname']." ";
         $str.=(!empty($option['where']))?$this::encodeSelectConditions($option['where']):'';
         $str.=(!empty($option['sort']))?$this::encodeSelectSorting($option['sort']):'';
+
         try{
             $this->resultSet=mysqli_query($this->connection, $str);
             $this->pointerOffset=0;
@@ -181,7 +182,15 @@ class edb{
         }catch (Exception $ex){
             return false;
         }
-        
+    }
+    public function customQuery($sql){
+        try{
+            $this->resultSet=mysqli_query($this->connection, $sql);
+            $this->pointerOffset=0;
+            return true;
+        }catch(Exception $ex){
+            return false;
+        }
     }
 
     public function deleteData($option){
@@ -192,10 +201,10 @@ class edb{
         return true;
     }
 
-    public function update($option){
+    public function updateData($option){
         if(!$this::isConnected()) return;
         if(empty($option['tblname'])) return;
-        $str="UPDATE ". $option['tblname'] . " ";
+        $str="UPDATE ". $option['tblname'] . " SET ";
         $array_keys = array_keys($option['set']);
         $lastElement = array_pop($array_keys);
         foreach($option['set'] as $key => $value){
@@ -204,7 +213,7 @@ class edb{
             $str.= ($key != $lastElement) ?",":"";
         }
         $str.=(!empty($option['where']))?$this::encodeSelectConditions($option['where']):'';
-        
+    
         try{
             $this->resultSet=mysqli_query($this->connection,$str);
             $this->pointerOffset=0;
@@ -328,6 +337,8 @@ class edb{
     }
 
     public function insertData($option){
+
+        
         $tblname=$option['tblname'];
         $cols='';
         $vals=array();
@@ -335,6 +346,7 @@ class edb{
         $vals = implode("','", $option['value']);
         
         $sql="INSERT INTO $tblname ($cols) VALUES ('$vals')";
+
         try{
             return (mysqli_query($this->connection, $sql))?true:false;
         }
@@ -342,6 +354,10 @@ class edb{
             var_dump($ex);
             return false;
         }
+    }
+
+    public function insertId(){
+        return $this->connection->insert_id;
     }
     
     /**
@@ -476,4 +492,6 @@ class edb{
         $default=array('VARCHAR'=>'80','DECIMAL'=>'12');
         return (!empty($default[$type]))?'('.$default[$type].')':'';
     }
+
+
 }
