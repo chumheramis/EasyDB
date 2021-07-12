@@ -14,7 +14,7 @@ $updateData = [
 	]
 ];
 
-if($edb->update($updateData)){
+if($edb->updateData($updateData)){
 	print_r('update success' . PHP_EOL);
 }else{
 	print_r('update failed' . PHP_EOL);
